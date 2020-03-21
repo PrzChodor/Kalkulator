@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,18 +21,23 @@ namespace Kalkulator
     public partial class MainWindow : Window
     {
         private double a = 0;
-        private double b = 0;
+        public double B { get; set; }
         private char oper = ' ';
         private bool changed = true; 
         private bool computed = false;
         private bool error = false;
         private string separator;
+        public ObservableCollection<Result> HistoryList { get; set; }
+        public char Oper { get => oper; set => oper = value; }
+
+        private string current;
 
         public MainWindow()
         {
             InitializeComponent();
             separator = System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
             Resources.Add("decimalSeparator", separator);
+            HistoryList = new ObservableCollection<Result>();
         }
 
         private void Compute(object sender, RoutedEventArgs e)
@@ -44,33 +49,41 @@ namespace Kalkulator
                 return;
             }
 
-            switch (oper)
+            if(!changed && Oper != ' ')
+                current = a.ToString() + " " + Oper.ToString();
+
+            switch (Oper)
             {
                 case '+':
-                    a += b;
+                    a += B;
                     break;
                 case '-':
-                    a -= b;
+                    a -= B;
                     break;
                 case '×':
-                    a *= b;
+                    a *= B;
                     break;
                 case '÷':
-                    if(b != 0)
-                        a /= b;
+                    if(B != 0)
+                        a /= B;
                     else
                     {
                         inputTextBox.Text = "Nie można dzielić przez zero";
+                        current = "";
                         error = true;
                         return;
                     }
                     break;
                 case ' ':
-                    a = b;
+                    a = B;
                     break;
             }
             changed = false;
             computed = true;
+            current += " " + B.ToString() + " = " + a.ToString();
+            HistoryList.Add(new Result() { Text = current });
+            historyLabel.Content = current;
+            current = "";
             inputTextBox.Text = a.ToString();
         }
 
@@ -89,8 +102,7 @@ namespace Kalkulator
             if(computed)
             {
                 ClearEntry(sender, e);
-                oper = ' ';
-                operationLabel.Content = ' ';
+                Oper = ' ';
                 computed = false;
             }
 
@@ -104,7 +116,7 @@ namespace Kalkulator
                 else
                     inputTextBox.Text += (int)sender - 34;
 
-                b = Convert.ToDouble(inputTextBox.Text);
+                B = Convert.ToDouble(inputTextBox.Text);
             }
         }
         private void Operation(object sender, RoutedEventArgs e)
@@ -116,17 +128,22 @@ namespace Kalkulator
                 return;
             }
 
-            if (oper == ' ')
-                a = b;
+            if (Oper == ' ')
+                a = B;
             else if (changed)
                 Compute(sender, e);
 
             if (sender.GetType() == typeof(Button))
-                oper = ((Button)sender).Content.ToString()[0];
+                Oper = ((Button)sender).Content.ToString()[0];
             else
-                oper = (char)sender;
+                Oper = (char)sender;
 
-            operationLabel.Content = oper;
+            if (changed)
+                current = B.ToString() + " " + Oper.ToString();
+            else
+                current = a.ToString() + " " + Oper.ToString();
+
+            historyLabel.Content = current;
             changed = false;
             computed = false;
         }
@@ -145,7 +162,7 @@ namespace Kalkulator
                 inputTextBox.Text = inputTextBox.Text.Remove(inputTextBox.Text.Length - 1);
                 if (inputTextBox.Text.Length == 0)
                     ClearEntry(sender, e);
-                b = Convert.ToDouble(inputTextBox.Text);
+                B = Convert.ToDouble(inputTextBox.Text);
             }
         }
 
@@ -161,7 +178,7 @@ namespace Kalkulator
             changed = true;
 
             inputTextBox.Text = "0";
-            b = 0;
+            B = 0;
         }
 
         private void Clear(object sender, RoutedEventArgs e)
@@ -175,9 +192,10 @@ namespace Kalkulator
 
             inputTextBox.Text = "0";
             a = 0;
-            b = 0;
-            oper = ' ';
-            operationLabel.Content = ' ';
+            B = 0;
+            Oper = ' ';
+            current = "";
+            historyLabel.Content = "";
         }
 
         private void DecimalSep(object sender, RoutedEventArgs e)
@@ -195,8 +213,7 @@ namespace Kalkulator
             if (computed)
             {
                 ClearEntry(sender, e);
-                oper = ' ';
-                operationLabel.Content = ' ';
+                Oper = ' ';
                 computed = false;
             }
             string temp = inputTextBox.Text + separator;
@@ -220,7 +237,7 @@ namespace Kalkulator
                 inputTextBox.Text = inputTextBox.Text.Insert(0,"-");
 
             if(changed)
-                b = Convert.ToDouble(inputTextBox.Text);
+                B = Convert.ToDouble(inputTextBox.Text);
             else
                 a = Convert.ToDouble(inputTextBox.Text);
         }
@@ -278,6 +295,15 @@ namespace Kalkulator
             {
                 AddNumber(e.Key - 40, null);
                 e.Handled = true;
+            }
+        }
+
+        private void ShowHistory(object sender, RoutedEventArgs e)
+        {
+            if (!Application.Current.Windows.OfType<History>().Any())
+            {
+                History HistoryWin = new History();
+                HistoryWin.Show();
             }
         }
     }
