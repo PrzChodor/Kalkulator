@@ -26,10 +26,13 @@ namespace Kalkulator
         private bool changed = true; 
         private bool computed = false;
         private bool error = false;
+        private string separator;
 
         public MainWindow()
         {
             InitializeComponent();
+            separator = System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+            Resources.Add("decimalSeparator", separator);
         }
 
         private void Compute(object sender, RoutedEventArgs e)
@@ -91,9 +94,9 @@ namespace Kalkulator
                 computed = false;
             }
 
-            if (inputTextBox.Text.Length < inputTextBox.MaxLength)
+            if (inputTextBox.Text.Length < 16)
             {
-                if (Convert.ToDouble(inputTextBox.Text) == 0 && !inputTextBox.Text.Contains(","))
+                if (Convert.ToDouble(inputTextBox.Text) == 0 && !inputTextBox.Text.Contains(separator))
                     inputTextBox.Text = "";
 
                 if (sender.GetType() == typeof(Button))
@@ -177,7 +180,7 @@ namespace Kalkulator
             operationLabel.Content = ' ';
         }
 
-        private void DecimalPoint(object sender, RoutedEventArgs e)
+        private void DecimalSep(object sender, RoutedEventArgs e)
         {
             if (error)
             {
@@ -196,9 +199,9 @@ namespace Kalkulator
                 operationLabel.Content = ' ';
                 computed = false;
             }
-
-            if (inputTextBox.Text.Length < inputTextBox.MaxLength && !inputTextBox.Text.Contains(","))
-                inputTextBox.Text += ",";
+            string temp = inputTextBox.Text + separator;
+            if (Double.TryParse(temp, out double num))
+                inputTextBox.Text += separator;
         }
 
 
@@ -215,7 +218,11 @@ namespace Kalkulator
                 inputTextBox.Text = inputTextBox.Text.Remove(0,1);
             else
                 inputTextBox.Text = inputTextBox.Text.Insert(0,"-");
-            b = Convert.ToDouble(inputTextBox.Text);
+
+            if(changed)
+                b = Convert.ToDouble(inputTextBox.Text);
+            else
+                a = Convert.ToDouble(inputTextBox.Text);
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -227,7 +234,37 @@ namespace Kalkulator
                 return;
             }
 
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Back)
+            {
+                RemoveNumber(sender, null);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Decimal || (e.Key == Key.OemComma && separator == ",") || (e.Key == Key.OemPeriod && separator == ".") )
+            {
+                DecimalSep(sender, null);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Add || ((Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) && e.Key == Key.OemPlus))
+            {
+                Operation('+', null);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Subtract || e.Key == Key.OemMinus)
+            {
+                Operation('-', null);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Multiply || ((Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) && e.Key == Key.D8))
+            {
+                Operation('×', null);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Divide || e.Key == Key.OemQuestion)
+            {
+                Operation('÷', null);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Enter || e.Key == Key.OemPlus)
             {
                 Compute(sender, null);
                 e.Handled = true;
@@ -240,36 +277,6 @@ namespace Kalkulator
             else if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
             {
                 AddNumber(e.Key - 40, null);
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Back)
-            {
-                RemoveNumber(sender, null);
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Decimal || e.Key == Key.OemComma || e.Key == Key.OemPeriod)
-            {
-                DecimalPoint(sender, null);
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Add)
-            {
-                Operation('+', null);
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Subtract)
-            {
-                Operation('-', null);
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Multiply)
-            {
-                Operation('×', null);
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Divide)
-            {
-                Operation('÷', null);
                 e.Handled = true;
             }
         }

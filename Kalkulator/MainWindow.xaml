@@ -6,13 +6,14 @@
         xmlns:local="clr-namespace:Kalkulator"
         mc:Ignorable="d"
         KeyDown="Window_KeyDown" Background="#0A0A0A" WindowStyle="SingleBorderWindow"
-        Title="Kalkulator" Height="450" Width="350" MinHeight="300" MinWidth="200">
+        Title="Kalkulator" Height="450" Width="350" MinHeight="450" MinWidth="350">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="#1D1D1D"/>
             <Setter Property="Foreground" Value="#E7E7E7"/>
+            <Setter Property="Focusable" Value="False"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
@@ -45,11 +46,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Viewbox StretchDirection="Both" Stretch="Uniform" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="10">
-            <TextBox x:Name="inputTextBox" Text="0" FontSize="50" MaxLength="15" BorderThickness="0"
+            <TextBox x:Name="inputTextBox" Text="0" FontSize="50" BorderThickness="0"
                      IsReadOnly="True" Background="#0A0A0A" Foreground="#E7E7E7"/>
         </Viewbox>
-        <Label x:Name="operationLabel" Content=" " FontSize="50" BorderThickness="0" Background="#0A0A0A" 
-               Foreground="#E7E7E7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label x:Name="operationLabel" Content=" " FontSize="50" BorderThickness="0" Background="#0A0A0A"  
+               Foreground="#E7E7E7" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
         <Button Content="CE" Grid.Column="0" Grid.Row="1" Background="#2A2A2A" Click="ClearEntry"/>
         <Button Content="C" Grid.Column="1" Grid.Row="1" Background="#2A2A2A" Click="Clear"/>
         <Button Content="←" Grid.Column="2" Grid.Row="1" Background="#2A2A2A" Click="RemoveNumber"/>
@@ -68,7 +69,7 @@
         <Button Content="+" Grid.Column="3" Grid.Row="4" Background="#2A2A2A" Click="Operation"/>
         <Button Content="+/-" Grid.Column="0" Grid.Row="5" Click="OpositeNumber"/>
         <Button Content="0" Grid.Column="1" Grid.Row="5"  Click="AddNumber"/>
-        <Button Content="," Grid.Column="2" Grid.Row="5" Click="DecimalPoint"/>
+        <Button Content="{DynamicResource decimalSeparator}" Grid.Column="2" Grid.Row="5" Click="DecimalSep"/>
         <Button Content="=" Grid.Column="3" Grid.Row="5" Background="#4A4A4A" Click="Compute"/>
     </Grid>
 </Window>
