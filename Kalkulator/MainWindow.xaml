@@ -1,0 +1,74 @@
+﻿<Window x:Class="Kalkulator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kalkulator"
+        mc:Ignorable="d"
+        KeyDown="Window_KeyDown" Background="#0A0A0A" WindowStyle="SingleBorderWindow"
+        Title="Kalkulator" Height="450" Width="350" MinHeight="300" MinWidth="200">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#1D1D1D"/>
+            <Setter Property="Foreground" Value="#E7E7E7"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="#707070"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Viewbox StretchDirection="Both" Stretch="Uniform" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="10">
+            <TextBox x:Name="inputTextBox" Text="0" FontSize="50" MaxLength="15" BorderThickness="0"
+                     IsReadOnly="True" Background="#0A0A0A" Foreground="#E7E7E7"/>
+        </Viewbox>
+        <Label x:Name="operationLabel" Content=" " FontSize="50" BorderThickness="0" Background="#0A0A0A" 
+               Foreground="#E7E7E7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Content="CE" Grid.Column="0" Grid.Row="1" Background="#2A2A2A" Click="ClearEntry"/>
+        <Button Content="C" Grid.Column="1" Grid.Row="1" Background="#2A2A2A" Click="Clear"/>
+        <Button Content="←" Grid.Column="2" Grid.Row="1" Background="#2A2A2A" Click="RemoveNumber"/>
+        <Button Content="÷" Grid.Column="3" Grid.Row="1" Background="#2A2A2A" Click="Operation"/>
+        <Button Content="7" Grid.Column="0" Grid.Row="2" Click="AddNumber"/>
+        <Button Content="8" Grid.Column="1" Grid.Row="2" Click="AddNumber"/>
+        <Button Content="9" Grid.Column="2" Grid.Row="2" Click="AddNumber"/>
+        <Button Content="×" Grid.Column="3" Grid.Row="2" Background="#2A2A2A" Click="Operation"/>
+        <Button Content="4" Grid.Column="0" Grid.Row="3" Click="AddNumber"/>
+        <Button Content="5" Grid.Column="1" Grid.Row="3" Click="AddNumber"/>
+        <Button Content="6" Grid.Column="2" Grid.Row="3" Click="AddNumber"/>
+        <Button Content="-" Grid.Column="3" Grid.Row="3" Background="#2A2A2A" Click="Operation"/>
+        <Button Content="1" Grid.Column="0" Grid.Row="4" Click="AddNumber"/>
+        <Button Content="2" Grid.Column="1" Grid.Row="4" Click="AddNumber"/>
+        <Button Content="3" Grid.Column="2" Grid.Row="4" Click="AddNumber"/>
+        <Button Content="+" Grid.Column="3" Grid.Row="4" Background="#2A2A2A" Click="Operation"/>
+        <Button Content="+/-" Grid.Column="0" Grid.Row="5" Click="OpositeNumber"/>
+        <Button Content="0" Grid.Column="1" Grid.Row="5"  Click="AddNumber"/>
+        <Button Content="," Grid.Column="2" Grid.Row="5" Click="DecimalPoint"/>
+        <Button Content="=" Grid.Column="3" Grid.Row="5" Background="#4A4A4A" Click="Compute"/>
+    </Grid>
+</Window>
