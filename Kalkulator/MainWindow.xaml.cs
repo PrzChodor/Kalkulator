@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Globalization;
+using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 namespace Kalkulator
 {
@@ -21,14 +24,13 @@ namespace Kalkulator
     public partial class MainWindow : Window
     {
         private double a = 0;
-        public double B { get; set; }
+        private double b = 0;
         private char oper = ' ';
         private bool changed = true; 
         private bool computed = false;
         private bool error = false;
         private string separator;
-        public ObservableCollection<Result> HistoryList { get; set; }
-        public char Oper { get => oper; set => oper = value; }
+        private ObservableCollection<Result> historyList;
 
         private string current;
 
@@ -37,7 +39,8 @@ namespace Kalkulator
             InitializeComponent();
             separator = System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
             Resources.Add("decimalSeparator", separator);
-            HistoryList = new ObservableCollection<Result>();
+            historyList = new ObservableCollection<Result>();
+            historyListBox.ItemsSource = historyList;
         }
 
         private void Compute(object sender, RoutedEventArgs e)
@@ -49,23 +52,23 @@ namespace Kalkulator
                 return;
             }
 
-            if(!changed && Oper != ' ')
-                current = a.ToString() + " " + Oper.ToString();
+            if(!changed && oper != ' ')
+                current = a.ToString() + " " + oper.ToString();
 
-            switch (Oper)
+            switch (oper)
             {
                 case '+':
-                    a += B;
+                    a += b;
                     break;
                 case '-':
-                    a -= B;
+                    a -= b;
                     break;
                 case '×':
-                    a *= B;
+                    a *= b;
                     break;
                 case '÷':
-                    if(B != 0)
-                        a /= B;
+                    if(b != 0)
+                        a /= b;
                     else
                     {
                         inputTextBox.Text = "Nie można dzielić przez zero";
@@ -75,18 +78,17 @@ namespace Kalkulator
                     }
                     break;
                 case ' ':
-                    a = B;
+                    a = b;
                     break;
             }
             changed = false;
             computed = true;
-            current += " " + B.ToString() + " = " + a.ToString();
-            HistoryList.Add(new Result() { Text = current });
+            current += " " + b.ToString() + " = " + a.ToString();
+            historyList.Add(new Result() { Text = current });
             historyLabel.Content = current;
             current = "";
             inputTextBox.Text = a.ToString();
         }
-
         private void AddNumber(object sender, RoutedEventArgs e)
         {
             if (error)
@@ -102,7 +104,7 @@ namespace Kalkulator
             if(computed)
             {
                 ClearEntry(sender, e);
-                Oper = ' ';
+                oper = ' ';
                 computed = false;
             }
 
@@ -116,7 +118,7 @@ namespace Kalkulator
                 else
                     inputTextBox.Text += (int)sender - 34;
 
-                B = Convert.ToDouble(inputTextBox.Text);
+                b = Convert.ToDouble(inputTextBox.Text);
             }
         }
         private void Operation(object sender, RoutedEventArgs e)
@@ -128,26 +130,25 @@ namespace Kalkulator
                 return;
             }
 
-            if (Oper == ' ')
-                a = B;
+            if (oper == ' ')
+                a = b;
             else if (changed)
                 Compute(sender, e);
 
             if (sender.GetType() == typeof(Button))
-                Oper = ((Button)sender).Content.ToString()[0];
+                oper = ((Button)sender).Content.ToString()[0];
             else
-                Oper = (char)sender;
+                oper = (char)sender;
 
             if (changed)
-                current = B.ToString() + " " + Oper.ToString();
+                current = b.ToString() + " " + oper.ToString();
             else
-                current = a.ToString() + " " + Oper.ToString();
+                current = a.ToString() + " " + oper.ToString();
 
             historyLabel.Content = current;
             changed = false;
             computed = false;
         }
-
         private void RemoveNumber(object sender, RoutedEventArgs e)
         {
             if (error)
@@ -162,10 +163,9 @@ namespace Kalkulator
                 inputTextBox.Text = inputTextBox.Text.Remove(inputTextBox.Text.Length - 1);
                 if (inputTextBox.Text.Length == 0)
                     ClearEntry(sender, e);
-                B = Convert.ToDouble(inputTextBox.Text);
+                b = Convert.ToDouble(inputTextBox.Text);
             }
         }
-
         private void ClearEntry(object sender, RoutedEventArgs e)
         {
             if (error)
@@ -178,9 +178,8 @@ namespace Kalkulator
             changed = true;
 
             inputTextBox.Text = "0";
-            B = 0;
+            b = 0;
         }
-
         private void Clear(object sender, RoutedEventArgs e)
         {
             if (error)
@@ -192,12 +191,11 @@ namespace Kalkulator
 
             inputTextBox.Text = "0";
             a = 0;
-            B = 0;
-            Oper = ' ';
+            b = 0;
+            oper = ' ';
             current = "";
             historyLabel.Content = "";
         }
-
         private void DecimalSep(object sender, RoutedEventArgs e)
         {
             if (error)
@@ -213,15 +211,13 @@ namespace Kalkulator
             if (computed)
             {
                 ClearEntry(sender, e);
-                Oper = ' ';
+                oper = ' ';
                 computed = false;
             }
             string temp = inputTextBox.Text + separator;
             if (Double.TryParse(temp, out double num))
                 inputTextBox.Text += separator;
         }
-
-
         private void OpositeNumber(object sender, RoutedEventArgs e)
         {
             if (error)
@@ -237,11 +233,10 @@ namespace Kalkulator
                 inputTextBox.Text = inputTextBox.Text.Insert(0,"-");
 
             if(changed)
-                B = Convert.ToDouble(inputTextBox.Text);
+                b = Convert.ToDouble(inputTextBox.Text);
             else
                 a = Convert.ToDouble(inputTextBox.Text);
         }
-
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (error)
@@ -297,47 +292,83 @@ namespace Kalkulator
                 e.Handled = true;
             }
         }
-
         private void ShowHistory(object sender, RoutedEventArgs e)
         {
-            if (this.OwnedWindows.Count != 0)
-                this.OwnedWindows[0].Close();
+            if (TheGrid.ColumnDefinitions.Count == 4)
+            {
+                var column = new ColumnDefinition();
+                column.Width = new GridLength(4, GridUnitType.Star);
+                TheGrid.ColumnDefinitions.Add(column);
+                this.Width += this.Width - 16;
+                this.MinWidth = 684;
+                historyListBox.Visibility = Visibility.Visible;
+            }
             else
             {
-                History HistoryWin = new History();
-                HistoryWin.Owner = this;
-                HistoryWin.Height = this.Height;
-                HistoryWin.Top = this.Top;
-                HistoryWin.Left = this.Left + this.Width - 15;
-                if (HistoryWin.Left + HistoryWin.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
-                    HistoryWin.Left = this.Left - HistoryWin.Width + 15;
-                HistoryWin.Show();
+                var column = TheGrid.ColumnDefinitions[4];
+                this.MinWidth = 350;
+                this.Width = this.Width / 2 + 8;
+                TheGrid.ColumnDefinitions.RemoveAt(4);
+                historyListBox.Visibility = Visibility.Hidden;
+            }
+        }
+        private void historyListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (historyListBox.SelectedItem != null)
+            {
+                string text = ((Result)historyListBox.SelectedItem).Text;
+                inputTextBox.Text = text.Substring(text.IndexOf("=") + 2);
+
+                if(!computed)
+                    b = Double.Parse(text.Substring(text.IndexOf("=") + 2));
+                else
+                    a = Double.Parse(text.Substring(text.IndexOf("=") + 2));
+            }
+        }
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            Grid grid = (Grid)sender;
+            Binding binding = new Binding("ActualWidth");
+            binding.Source = historyListBox;
+            binding.Converter = new CustomConverter();
+            grid.SetBinding(Grid.WidthProperty, binding);
+        }
+        private void historyListBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            historyListBox.UnselectAll();
+        }
+    }
+
+    public class Result : INotifyPropertyChanged
+    {
+        private string text;
+        public string Text
+        {
+            get { return text; }
+            set
+            {
+                text = value;
+                OnPropertyChanged();
             }
         }
 
-        private void Window_LocationChanged(object sender, EventArgs e)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            if (this.OwnedWindows.Count != 0)
-            {
-                History HistoryWin = (History)this.OwnedWindows[0];
-                HistoryWin.Top = this.Top;
-                HistoryWin.Left = this.Left + this.Width - 15;
-                if (HistoryWin.Left + HistoryWin.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
-                    HistoryWin.Left = this.Left - HistoryWin.Width + 15;
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
+    public class CustomConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((double)value) - 40;
         }
 
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (this.OwnedWindows.Count != 0)
-            {
-                History HistoryWin = (History)this.OwnedWindows[0];
-                HistoryWin.Height = this.Height;
-                HistoryWin.Top = this.Top;
-                HistoryWin.Left = this.Left + this.Width - 15;
-                if (HistoryWin.Left + HistoryWin.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
-                    HistoryWin.Left = this.Left - HistoryWin.Width + 15;
-            }
+            throw new NotSupportedException("Cannot convert back");
         }
     }
 }
