@@ -8,6 +8,32 @@
         KeyDown="Window_KeyDown" Background="#0A0A0A" WindowStyle="SingleBorderWindow"
         Title="Calculator" Icon="icon.ico" Height="450" Width="350" MinHeight="450" MinWidth="350">
     <Window.Resources>
+        <Style x:Key="{x:Type Thumb}" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border  Background="{TemplateBinding Background}" BorderThickness="0"  Width="20"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Foreground" Value="#4A4A4A" />
+            <Setter Property="Background" Value="#1D1D1D" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="GridRoot" Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="true" Focusable="false">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}" BorderThickness="0" />
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -77,7 +103,7 @@
         <Button Content="0" Grid.Column="1" Grid.Row="6"  Click="AddNumber"/>
         <Button Content="{DynamicResource decimalSeparator}" Grid.Column="2" Grid.Row="6" Click="DecimalSep"/>
         <Button Content="=" Grid.Column="3" Grid.Row="6" Background="#4A4A4A" Click="Compute"/>
-        
+
         <ListBox Name="historyListBox" HorizontalContentAlignment="Left" Background="#0A0A0A" BorderThickness="0" Visibility="Hidden"
                  FontSize="24" Padding="5"  SelectionChanged="historyListBox_SelectionChanged" MouseUp="historyListBox_MouseUp"
                  Grid.Column="5" Grid.RowSpan ="7" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
