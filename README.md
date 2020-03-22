@@ -1,3 +1,3 @@
 # Kalkulator
-Kalkulator na POIG
+Kalkulator na POIG  
 Przemysław Chodór
