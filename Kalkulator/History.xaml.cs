@@ -10,7 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.ComponentModel;
 
@@ -43,7 +43,20 @@ namespace Kalkulator
         {
             historyListBox.UnselectAll();
         }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            Grid g = (Grid)sender; 
+            Binding b = new Binding("ActualWidth");
+            b.Source = historyListBox;
+            b.Converter = new CustomConverter();
+
+            g.SetBinding(Grid.WidthProperty, b);
+        }
+
     }
+
     public class Result : INotifyPropertyChanged
     {
         private string text;
@@ -62,6 +75,18 @@ namespace Kalkulator
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
+    public class CustomConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((double)value) - 40;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException("Cannot convert back");
         }
     }
 }

@@ -4,14 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kalkulator"
-        mc:Ignorable="d" GotMouseCapture="Window_GotMouseCapture"
-        Title="Calculator - History" Height="450" Width="350" MinHeight="450" MinWidth="350">
+        mc:Ignorable="d" GotMouseCapture="Window_GotMouseCapture" WindowStyle="ToolWindow" 
+        Title="Calculator - History" Height="450" Width="350" ResizeMode="NoResize">
     <Grid>
-        <ListBox Name="historyListBox" HorizontalContentAlignment="Stretch" Background="#0A0A0A" BorderThickness="0"
-                 FontSize="24" Padding="5" SelectionChanged="historyListBox_SelectionChanged">
+        <ListBox Name="historyListBox" HorizontalContentAlignment="Left" Background="#0A0A0A" BorderThickness="0"
+                 FontSize="24" Padding="5"  SelectionChanged="historyListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label Content="{Binding Text, Mode=TwoWay}" Margin="5" Foreground="#E7E7E7"/>
+                    <Grid Loaded="Grid_Loaded" >
+                        <TextBlock Text="{Binding Text, Mode=TwoWay}" TextWrapping="Wrap" Foreground="#E7E7E7"/>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

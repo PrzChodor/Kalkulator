@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kalkulator"
         mc:Ignorable="d"
-        KeyDown="Window_KeyDown" Background="#0A0A0A" WindowStyle="SingleBorderWindow"
-        Title="Calculator" Height="450" Width="350" MinHeight="450" MinWidth="350">
+        KeyDown="Window_KeyDown" Background="#0A0A0A" WindowStyle="SingleBorderWindow" LocationChanged="Window_LocationChanged" 
+        SizeChanged="Window_SizeChanged" Title="Calculator" Height="450" Width="350" MinHeight="450" MinWidth="350">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="24"/>

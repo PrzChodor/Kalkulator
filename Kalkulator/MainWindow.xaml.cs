@@ -300,10 +300,43 @@ namespace Kalkulator
 
         private void ShowHistory(object sender, RoutedEventArgs e)
         {
-            if (!Application.Current.Windows.OfType<History>().Any())
+            if (this.OwnedWindows.Count != 0)
+                this.OwnedWindows[0].Close();
+            else
             {
                 History HistoryWin = new History();
+                HistoryWin.Owner = this;
+                HistoryWin.Height = this.Height;
+                HistoryWin.Top = this.Top;
+                HistoryWin.Left = this.Left + this.Width - 15;
+                if (HistoryWin.Left + HistoryWin.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
+                    HistoryWin.Left = this.Left - HistoryWin.Width + 15;
                 HistoryWin.Show();
+            }
+        }
+
+        private void Window_LocationChanged(object sender, EventArgs e)
+        {
+            if (this.OwnedWindows.Count != 0)
+            {
+                History HistoryWin = (History)this.OwnedWindows[0];
+                HistoryWin.Top = this.Top;
+                HistoryWin.Left = this.Left + this.Width - 15;
+                if (HistoryWin.Left + HistoryWin.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
+                    HistoryWin.Left = this.Left - HistoryWin.Width + 15;
+            }
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (this.OwnedWindows.Count != 0)
+            {
+                History HistoryWin = (History)this.OwnedWindows[0];
+                HistoryWin.Height = this.Height;
+                HistoryWin.Top = this.Top;
+                HistoryWin.Left = this.Left + this.Width - 15;
+                if (HistoryWin.Left + HistoryWin.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
+                    HistoryWin.Left = this.Left - HistoryWin.Width + 15;
             }
         }
     }
