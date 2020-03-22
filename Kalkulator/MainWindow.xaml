@@ -78,9 +78,9 @@
         <Button Content="{DynamicResource decimalSeparator}" Grid.Column="2" Grid.Row="6" Click="DecimalSep"/>
         <Button Content="=" Grid.Column="3" Grid.Row="6" Background="#4A4A4A" Click="Compute"/>
         
-        <ListBox Name="historyListBox" HorizontalContentAlignment="Left" Background="#0A0A0A" BorderThickness="0"
-                 Visibility="Hidden" FontSize="24" Padding="5"  SelectionChanged="historyListBox_SelectionChanged"
-                 Grid.Column="5" Grid.RowSpan ="7" LostFocus="historyListBox_LostFocus" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox Name="historyListBox" HorizontalContentAlignment="Left" Background="#0A0A0A" BorderThickness="0" Visibility="Hidden"
+                 FontSize="24" Padding="5"  SelectionChanged="historyListBox_SelectionChanged" MouseUp="historyListBox_MouseUp"
+                 Grid.Column="5" Grid.RowSpan ="7" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Loaded="Grid_Loaded" >

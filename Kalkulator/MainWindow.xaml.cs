@@ -319,10 +319,12 @@ namespace Kalkulator
                 string text = ((Result)historyListBox.SelectedItem).Text;
                 inputTextBox.Text = text.Substring(text.IndexOf("=") + 2);
 
-                if(!computed)
+                if(!computed || oper == ' ')
                     b = Double.Parse(text.Substring(text.IndexOf("=") + 2));
                 else
                     a = Double.Parse(text.Substring(text.IndexOf("=") + 2));
+
+                changed = true;
             }
         }
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -333,7 +335,7 @@ namespace Kalkulator
             binding.Converter = new CustomConverter();
             grid.SetBinding(Grid.WidthProperty, binding);
         }
-        private void historyListBox_LostFocus(object sender, RoutedEventArgs e)
+        private void historyListBox_MouseUp(object sender, MouseButtonEventArgs e)
         {
             historyListBox.UnselectAll();
         }
