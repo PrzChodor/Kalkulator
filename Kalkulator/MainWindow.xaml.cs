@@ -323,7 +323,7 @@ namespace Kalkulator
                     b = Double.Parse(text.Substring(text.IndexOf("=") + 2));
                 else
                     a = Double.Parse(text.Substring(text.IndexOf("=") + 2));
-
+                
                 changed = true;
             }
         }
